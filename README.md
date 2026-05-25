@@ -242,5 +242,3 @@ Troubleshooting and implementation notes are documented in the supporting projec
 ├── configs/
 └── screenshots/
 ```
-
-Supporting documentation, diagrams, manifests, and sanitised configuration examples are organised separately to keep the main README concise and easy to review.
