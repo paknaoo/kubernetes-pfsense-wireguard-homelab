@@ -247,10 +247,17 @@ Detailed supporting documentation is available in the `docs/` directory:
 ├── docs/
 │   ├── architecture.md
 │   ├── networking.md
-│   ├── security.md
+│   ├── access-control.md
 │   ├── kubernetes.md
 │   └── troubleshooting.md
 ├── manifests/
+│   ├── metallb/
+│   ├── envoy-gateway/
+│   ├── metrics-server/
+│   └── storage/
 ├── configs/
+│   ├── wireguard/
+│   ├── pfsense/
+│   └── kubeadm/
 └── screenshots/
 ```
