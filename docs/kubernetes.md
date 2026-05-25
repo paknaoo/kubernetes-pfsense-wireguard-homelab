@@ -106,3 +106,39 @@ kubectl top pods -A
 
 Deployment adjustments were applied to ensure compatibility between metrics-server and kubelet TLS behaviour within the lab environment.
 
+## Gateway & Ingress Components
+
+Ingress functionality is implemented using Envoy Gateway and the Kubernetes Gateway API.
+
+The deployment includes:
+
+- GatewayClass
+- Gateway
+- HTTPRoute
+- `httpbin` backend service
+
+MetalLB provides ingress address allocation, while Envoy Gateway handles request processing and routing.
+
+Validated ingress testing:
+
+```bash
+curl -H "Host: app.lab.local" http://10.10.10.50/get
+```
+
+Successful responses confirmed correct integration between Gateway API resources, Envoy Gateway, MetalLB, and backend application routing.
+
+## Platform Validation
+
+The Kubernetes platform has been validated across deployment, networking, observability, storage, and ingress workflows.
+
+| Area | Validation |
+|------|------|
+| Cluster health | All nodes reporting `Ready` |
+| Pod networking | Calico operational |
+| DNS | CoreDNS operational |
+| Metrics | metrics-server collecting node and pod metrics |
+| Storage | PVC-backed workloads validated |
+| Service exposure | MetalLB ingress allocation operational |
+| Gateway routing | Envoy Gateway and HTTPRoute validation successful |
+
+The validated behaviour confirms that the platform supports core Kubernetes operational workflows within a self-managed lab environment.
