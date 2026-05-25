@@ -78,3 +78,37 @@ flowchart LR
     WG --> PFSENSE
     PFSENSE --> LAN
 ```
+
+## Network Design
+
+The environment uses three isolated network segments:
+
+| Network | Purpose | Range |
+|----------|----------|--------|
+| OUTSIDE | External / hypervisor-facing network | `192.168.50.0/24` |
+| LAN | Kubernetes cluster network | `10.10.10.0/24` |
+| WG | WireGuard VPN network | `10.20.20.0/24` |
+
+pfSense provides routing, DHCP services for the LAN segment, firewall enforcement, and WireGuard VPN termination.
+
+Static addressing is used for Kubernetes nodes to ensure predictable cluster operation and stable service exposure.
+
+### Kubernetes Nodes
+
+| Node | Address |
+|------|------|
+| k8s-master | `10.10.10.10` |
+| worker1 | `10.10.10.11` |
+| worker2 | `10.10.10.12` |
+| worker3 | `10.10.10.13` |
+
+### Service Exposure
+
+MetalLB provides Layer 2 load balancing for Kubernetes services.
+
+Current ingress allocation:
+
+| Component | Address |
+|------|------|
+| Envoy Gateway / MetalLB ingress | `10.10.10.50` |
+
