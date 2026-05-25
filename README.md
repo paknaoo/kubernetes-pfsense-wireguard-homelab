@@ -200,3 +200,15 @@ Validated remote access from `mgmt01`:
 | Envoy Gateway ingress | Accessible |
 | Worker nodes | Blocked |
 | Remaining LAN hosts | Blocked |
+
+## Key Troubleshooting Outcomes
+
+The project involved diagnosing and resolving several infrastructure and Kubernetes platform issues, including:
+
+- DHCP lease conflicts and duplicate addressing related to static mappings
+- Calico deployment issues caused by missing Kubernetes custom resources
+- CNI plugin path mismatch affecting pod networking and CoreDNS startup
+- Metrics collection issues requiring kubelet TLS compatibility adjustments
+- Kubernetes storage validation using persistent test workloads
+
+Troubleshooting and implementation notes are documented in the supporting project documentation.
