@@ -155,3 +155,48 @@ The management workstation (`mgmt01`) connects through the VPN network and is pe
 Access to Kubernetes worker nodes and the remainder of the LAN segment is intentionally blocked.
 
 The WAN interface is kept minimally exposed, with WireGuard acting as the primary remote administration path.
+
+## Validation
+
+The environment has been validated across networking, Kubernetes platform services, ingress routing, storage, and secure remote access workflows.
+
+### Kubernetes Platform
+
+Verified functionality:
+
+- All cluster nodes reporting `Ready`
+- CoreDNS operational
+- metrics-server collecting node and pod metrics
+- Persistent storage validated using PVC-backed test workloads
+
+### Gateway & Service Exposure
+
+Verified functionality:
+
+- Envoy Gateway and Gateway API deployment
+- HTTP routing through `HTTPRoute`
+- MetalLB service exposure
+- Successful ingress testing using:
+
+```bash
+curl -H "Host: app.lab.local" http://10.10.10.50/get
+```
+
+### WireGuard VPN
+
+Verified functionality:
+
+- Successful VPN handshake
+- Route propagation through pfSense
+- Automatic tunnel startup after reboot
+- Restricted access model enforced
+
+Validated remote access from `mgmt01`:
+
+| Resource | Result |
+|------|------|
+| pfSense GUI | Accessible |
+| Kubernetes control plane | Accessible |
+| Envoy Gateway ingress | Accessible |
+| Worker nodes | Blocked |
+| Remaining LAN hosts | Blocked |
