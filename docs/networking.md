@@ -46,3 +46,41 @@ flowchart LR
     WG --> PFSENSE
     PFSENSE --> LAN
 ```
+
+## Routing Model
+
+pfSense acts as the central routing point for the lab environment.
+
+### Interface Configuration
+
+| Interface | Address |
+|------|------|
+| WAN / OUTSIDE | `192.168.50.254` |
+| LAN | `10.10.10.254` |
+| WireGuard | `10.20.20.1` |
+
+### DHCP & Static Addressing
+
+LAN DHCP is provided by pfSense.
+
+Static mappings are used for Kubernetes infrastructure nodes to maintain predictable addressing and stable cluster behaviour.
+
+| Node | Address |
+|------|------|
+| k8s-master | `10.10.10.10` |
+| worker1 | `10.10.10.11` |
+| worker2 | `10.10.10.12` |
+| worker3 | `10.10.10.13` |
+
+### Administrative Traffic Path
+
+The management workstation (`mgmt01`) operates from the OUTSIDE network (`192.168.50.10`).
+
+Administrative traffic follows the path:
+
+```text
+mgmt01 → WireGuard VPN → pfSense → approved internal resources
+```
+
+This routing model allows secure remote administration while keeping internal Kubernetes services isolated from direct external access.
+
