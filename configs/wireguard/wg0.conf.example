@@ -1,0 +1,10 @@
+[Interface]
+Address = 10.20.20.2/24
+PrivateKey = <CLIENT_PRIVATE_KEY>
+DNS = 10.10.10.254
+
+[Peer]
+PublicKey = <PFSENSE_WIREGUARD_PUBLIC_KEY>
+Endpoint = <PFSENSE_WAN_ADDRESS>:51820
+AllowedIPs = 10.10.10.10/32, 10.10.10.50/32, 10.10.10.254/32, 10.20.20.0/24
+PersistentKeepalive = 25
