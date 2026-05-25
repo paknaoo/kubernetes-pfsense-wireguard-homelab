@@ -112,3 +112,26 @@ Current ingress allocation:
 |------|------|
 | Envoy Gateway / MetalLB ingress | `10.10.10.50` |
 
+## Kubernetes Platform
+
+The Kubernetes cluster was deployed with `kubeadm` on Debian virtual machines using `containerd` as the container runtime and Calico for pod networking.
+
+The cluster consists of one control plane node and three worker nodes.
+
+| Role | Nodes |
+|------|------|
+| Control plane | `k8s-master` |
+| Workers | `worker1`, `worker2`, `worker3` |
+
+### Installed Platform Components
+
+| Component | Purpose |
+|----------|----------|
+| Calico | Kubernetes pod networking |
+| CoreDNS | Cluster DNS |
+| metrics-server | Resource metrics for nodes and pods |
+| local-path-provisioner | Lightweight persistent storage |
+| MetalLB | LoadBalancer support for bare-metal Kubernetes |
+| Envoy Gateway | Gateway API implementation and ingress traffic handling |
+
+The cluster is fully operational, with all nodes in a `Ready` state and core platform components running successfully.
