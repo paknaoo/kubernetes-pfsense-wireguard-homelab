@@ -19,6 +19,7 @@ The project is designed as a practical platform for deploying, validating, and t
 - [Secure Remote Administration](#secure-remote-administration)
 - [Validation](#validation)
 - [Key Troubleshooting Outcomes](#key-troubleshooting-outcomes)
+- [Documentation](#documentation)
 - [Repository Structure](#repository-structure)
 
 ## Technology Stack
@@ -225,6 +226,18 @@ The project involved diagnosing and resolving several infrastructure and Kuberne
 - Kubernetes storage validation using persistent test workloads
 
 Troubleshooting and implementation notes are documented in the supporting project documentation.
+
+## Documentation
+
+Detailed supporting documentation is available in the `docs/` directory:
+
+| Document | Description |
+|------|------|
+| [Architecture](docs/architecture.md) | High-level lab architecture, components, and administration flow |
+| [Networking Design](docs/networking.md) | Network segments, routing model, MetalLB, and Gateway traffic flow |
+| [Security Model](docs/security.md) | pfSense firewall model, WireGuard access, and least-privilege controls |
+| [Kubernetes Platform](docs/kubernetes.md) | Cluster topology, platform components, storage, observability, and ingress |
+| [Troubleshooting & Lessons Learned](docs/troubleshooting.md) | Key issues resolved during deployment and validation |
 
 ## Repository Structure
 
