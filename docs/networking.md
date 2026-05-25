@@ -158,3 +158,19 @@ curl -H "Host: app.lab.local" http://10.10.10.50/get
 
 Successful responses confirm correct integration between MetalLB, Envoy Gateway, Gateway API resources, and backend service routing.
 
+## Network Validation
+
+The networking model was validated through Kubernetes, service exposure, and VPN access tests.
+
+| Area | Validation |
+|------|------|
+| pfSense routing | Traffic routed between defined segments |
+| LAN DHCP | Kubernetes nodes received expected static mappings |
+| Calico | Pod networking operational across cluster nodes |
+| CoreDNS | Cluster service discovery operational |
+| MetalLB | LoadBalancer IP assigned from the LAN pool |
+| Envoy Gateway | HTTP traffic routed to backend service |
+| WireGuard | VPN traffic routed through pfSense to approved targets |
+
+The validation confirms that the lab network supports Kubernetes operations, controlled service exposure, and secure remote administration.
+
