@@ -235,7 +235,7 @@ Detailed supporting documentation is available in the `docs/` directory:
 |------|------|
 | [Architecture](docs/architecture.md) | High-level lab architecture, components, and administration flow |
 | [Networking Design](docs/networking.md) | Network segments, routing model, MetalLB, and Gateway traffic flow |
-| [Security Model](docs/security.md) | pfSense firewall model, WireGuard access, and least-privilege controls |
+| [Security Model](docs/access-control.md) | pfSense firewall model, WireGuard access, and least-privilege controls |
 | [Kubernetes Platform](docs/kubernetes.md) | Cluster topology, platform components, storage, observability, and ingress |
 | [Troubleshooting & Lessons Learned](docs/troubleshooting.md) | Key issues resolved during deployment and validation |
 
