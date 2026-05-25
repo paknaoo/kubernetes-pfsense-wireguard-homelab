@@ -135,3 +135,23 @@ The cluster consists of one control plane node and three worker nodes.
 | Envoy Gateway | Gateway API implementation and ingress traffic handling |
 
 The cluster is fully operational, with all nodes in a `Ready` state and core platform components running successfully.
+
+## Secure Remote Administration
+
+Remote administration is provided through a WireGuard VPN terminated on pfSense.
+
+Administrative access follows a least-privilege model based on explicit allow rules, network aliases, and restricted routing.
+
+The management workstation (`mgmt01`) connects through the VPN network and is permitted to access only approved management targets.
+
+### Allowed VPN Access
+
+| Target | Purpose |
+|------|------|
+| `10.10.10.254` | pfSense LAN GUI |
+| `10.10.10.10` | Kubernetes control plane administration |
+| `10.10.10.50` | Envoy Gateway / MetalLB ingress testing |
+
+Access to Kubernetes worker nodes and the remainder of the LAN segment is intentionally blocked.
+
+The WAN interface is kept minimally exposed, with WireGuard acting as the primary remote administration path.
