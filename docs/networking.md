@@ -8,10 +8,41 @@ pfSense provides routing, firewalling, DHCP services, and VPN termination, while
 
 ## Contents
 
-- [Overview](#overview)
 - [Network Segments](#network-segments)
 - [Routing Model](#routing-model)
 - [Kubernetes Networking](#kubernetes-networking)
 - [MetalLB Service Exposure](#metallb-service-exposure)
 - [Gateway & Traffic Flow](#gateway--traffic-flow)
 - [Network Validation](#network-validation)
+
+## Network Segments
+
+The environment uses three dedicated network segments with distinct operational roles.
+
+| Network | Purpose | Address Range |
+|------|------|------|
+| OUTSIDE | External / hypervisor-facing network | `192.168.50.0/24` |
+| LAN | Kubernetes cluster network | `10.10.10.0/24` |
+| WG | WireGuard administrative network | `10.20.20.0/24` |
+
+pfSense provides the network boundary between these segments and controls routing, firewall enforcement, and VPN connectivity.
+
+```mermaid
+flowchart LR
+
+    OUTSIDE["OUTSIDE
+    192.168.50.0/24"]
+
+    PFSENSE["pfSense
+    Router / Firewall / VPN"]
+
+    LAN["LAN
+    10.10.10.0/24"]
+
+    WG["WireGuard
+    10.20.20.0/24"]
+
+    OUTSIDE --> PFSENSE
+    WG --> PFSENSE
+    PFSENSE --> LAN
+```
