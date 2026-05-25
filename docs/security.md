@@ -1,5 +1,13 @@
 # Security Model
 
+## Contents
+
+- [Overview](#overview)
+- [Security Boundaries](#security-boundaries)
+- [Firewall Policy](#firewall-policy)
+- [WireGuard Least-Privilege Access](#wireguard-least-privilege-access)
+- [Security Validation](#security-validation)
+
 ## Overview
 
 The lab follows a least-privilege security model centred around pfSense firewalling, WireGuard VPN access, and controlled administrative reachability.
