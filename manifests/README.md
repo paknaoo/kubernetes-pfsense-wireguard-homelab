@@ -11,6 +11,7 @@ The manifests are organised by component to keep the repository easy to review a
 | `metallb/` | MetalLB address pool and Layer 2 advertisement |
 | `envoy-gateway/` | Gateway API, Envoy Gateway routing, and test backend |
 | `storage/` | Persistent storage validation using local-path-provisioner |
+| `metrics-server/` | Lab-specific metrics-server adjustment and validation notes |
 
 ## Notes
 
