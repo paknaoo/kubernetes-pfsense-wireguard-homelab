@@ -14,3 +14,37 @@ The design focuses on:
 - restricted VPN routing
 - controlled administrative access
 
+## Security Boundaries
+
+The environment is segmented into dedicated security zones separated by pfSense.
+
+| Network | Role | Trust Level |
+|------|------|------|
+| OUTSIDE | External / hypervisor-facing network | Untrusted |
+| LAN | Kubernetes cluster network | Internal |
+| WG | WireGuard administrative network | Restricted administrative access |
+
+pfSense acts as the routing, firewall, and VPN boundary between these segments.
+
+```mermaid
+flowchart LR
+
+    OUTSIDE["OUTSIDE
+    192.168.50.0/24
+    Untrusted"]
+
+    PFSENSE["pfSense
+    Firewall / Router / VPN"]
+
+    LAN["LAN
+    10.10.10.0/24
+    Kubernetes Cluster"]
+
+    WG["WireGuard
+    10.20.20.0/24
+    Administrative Access"]
+
+    OUTSIDE --> PFSENSE
+    WG --> PFSENSE
+    PFSENSE --> LAN
+```
