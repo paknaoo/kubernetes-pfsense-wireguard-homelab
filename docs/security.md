@@ -48,3 +48,25 @@ flowchart LR
     WG --> PFSENSE
     PFSENSE --> LAN
 ```
+
+## Firewall Policy
+
+The firewall model follows a default-deny approach, with administrative access granted only where explicitly required.
+
+### WAN Exposure
+
+The WAN interface is intentionally kept minimally exposed.
+
+WireGuard is used as the primary remote administration mechanism, avoiding direct administrative exposure of internal services to the external network.
+
+The active WAN policy permits:
+
+| Source | Destination | Protocol | Purpose |
+|------|------|------|------|
+| `192.168.50.10` | pfSense WAN | UDP 51820 | WireGuard VPN access |
+
+### Administrative Access Model
+
+Administrative traffic is routed through the WireGuard tunnel and evaluated by pfSense firewall policy before reaching internal resources.
+
+This design allows management access without exposing the Kubernetes environment or internal LAN services directly through the WAN interface.
