@@ -44,3 +44,21 @@ flowchart TB
 
 The platform is deployed using a traditional kubeadm control plane and worker model suitable for self-managed Kubernetes environments.
 
+## Cluster Deployment
+
+The cluster was deployed using `kubeadm` on Debian virtual machines.
+
+`containerd` is used as the container runtime with `SystemdCgroup` enabled to align container runtime behaviour with Kubernetes recommendations.
+
+### Platform Components
+
+| Component | Implementation |
+|------|------|
+| Operating System | Debian |
+| Kubernetes Deployment | kubeadm |
+| Container Runtime | containerd |
+| Pod Networking | Calico |
+| Cluster DNS | CoreDNS |
+
+The deployment follows a self-managed Kubernetes model, with infrastructure components installed and validated individually during platform bring-up.
+
