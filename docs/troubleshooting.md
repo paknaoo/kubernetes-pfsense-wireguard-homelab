@@ -67,3 +67,43 @@ Successful restoration of:
 - Kubernetes workload scheduling
 - cluster networking functionality
 
+## CNI Path Mismatch
+
+### Problem
+
+Several Kubernetes workloads, including CoreDNS, remained stuck in a `ContainerCreating` state after cluster deployment.
+
+Pod networking was not functioning correctly across the environment.
+
+### Cause
+
+A mismatch existed between the expected Kubernetes CNI plugin location and the installed plugin path.
+
+Expected location:
+
+```text
+/usr/lib/cni
+```
+
+Installed plugin location:
+
+```text
+/opt/cni/bin
+```
+
+This prevented Kubernetes from locating the required CNI binaries.
+
+### Resolution
+
+The issue was resolved by aligning the expected CNI path with the installed plugin location through a filesystem symlink.
+
+Following remediation, Kubernetes networking components initialised successfully.
+
+### Outcome
+
+Successful restoration of:
+
+- pod networking
+- CoreDNS startup
+- normal Kubernetes workload operation
+
