@@ -62,3 +62,17 @@ The cluster was deployed using `kubeadm` on Debian virtual machines.
 
 The deployment follows a self-managed Kubernetes model, with infrastructure components installed and validated individually during platform bring-up.
 
+## Core Platform Components
+
+Several supporting components were installed to provide networking, DNS, metrics, and service exposure capabilities.
+
+| Component | Purpose | Status |
+|------|------|------|
+| Calico | Pod networking | Operational |
+| CoreDNS | Cluster DNS and service discovery | Operational |
+| metrics-server | Node and pod resource metrics | Operational |
+| MetalLB | LoadBalancer functionality | Operational |
+| Envoy Gateway | Gateway API ingress implementation | Operational |
+
+Core platform services are running successfully across the cluster and support networking, observability, and ingress workflows.
+
