@@ -238,6 +238,7 @@ Detailed supporting documentation is available in the `docs/` directory:
 | [Security Model](docs/access-control.md) | pfSense firewall model, WireGuard access, and least-privilege controls |
 | [Kubernetes Platform](docs/kubernetes.md) | Cluster topology, platform components, storage, observability, and ingress |
 | [Troubleshooting & Lessons Learned](docs/troubleshooting.md) | Key issues resolved during deployment and validation |
+| [Screenshots](screenshots/README.md) | Selected validation screenshots for cluster health, metrics, ingress, VPN, and firewall policy |
 
 ## Repository Structure
 
