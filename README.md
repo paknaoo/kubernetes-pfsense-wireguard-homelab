@@ -250,7 +250,6 @@ Detailed supporting documentation is available in the `docs/` directory:
 │   ├── security.md
 │   ├── kubernetes.md
 │   └── troubleshooting.md
-├── diagrams/
 ├── manifests/
 ├── configs/
 └── screenshots/
