@@ -177,7 +177,7 @@ This model allows remote administration of the cluster while keeping worker node
 
 Worker administration is performed through the Kubernetes control plane node, preserving the restricted access model while still allowing practical cluster management.
 
-More detailed firewall and VPN notes are covered in [Security Model](security.md).
+More detailed firewall and VPN notes are covered in [Security Model](access-control.md).
 
 ## Architecture Validation
 
