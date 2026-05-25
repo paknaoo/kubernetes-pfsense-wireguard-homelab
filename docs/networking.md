@@ -99,3 +99,24 @@ The cluster uses the standard Kubernetes CNI model for pod networking.
 During deployment, a CNI plugin path mismatch was identified and resolved by aligning the expected CNI binary location with the installed plugin path.
 
 This restored pod networking and allowed CoreDNS and other cluster workloads to start correctly.
+
+## MetalLB Service Exposure
+
+MetalLB provides `LoadBalancer` functionality for the self-managed Kubernetes environment.
+
+A dedicated address pool is allocated from the LAN network for service exposure.
+
+### Address Pool
+
+| Component | Range |
+|------|------|
+| MetalLB IP Pool | `10.10.10.50 – 10.10.10.60` |
+
+### Current Ingress Allocation
+
+| Service | Address |
+|------|------|
+| Envoy Gateway ingress | `10.10.10.50` |
+
+This approach enables Kubernetes services to be exposed within the lab environment without relying on a cloud provider load balancer.
+
