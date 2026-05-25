@@ -70,3 +70,48 @@ The active WAN policy permits:
 Administrative traffic is routed through the WireGuard tunnel and evaluated by pfSense firewall policy before reaching internal resources.
 
 This design allows management access without exposing the Kubernetes environment or internal LAN services directly through the WAN interface.
+
+## WireGuard Least-Privilege Access
+
+WireGuard access is restricted using pfSense firewall policy, aliases, and constrained routing definitions.
+
+Rather than granting broad LAN access, the VPN client is permitted to reach only explicitly approved administrative targets.
+
+### Approved Management Targets
+
+| Alias | Resource | Address |
+|------|------|------|
+| `K8S_ADMIN` | Kubernetes control plane | `10.10.10.10` |
+| `K8S_INGRESS` | Envoy Gateway / MetalLB ingress | `10.10.10.50` |
+| `PFSENSE_GUI` | pfSense administrative interface | `10.10.10.254` |
+| `PFSENSE_WG` | WireGuard endpoint | `10.20.20.1` |
+
+These targets are grouped through pfSense aliases and enforced by a dedicated WireGuard firewall policy.
+
+### VPN Reachability Model
+
+Validated access from `mgmt01` (`10.20.20.2`):
+
+| Resource | Result |
+|------|------|
+| pfSense GUI | Allowed |
+| Kubernetes control plane | Allowed |
+| Envoy Gateway ingress | Allowed |
+| worker1 | Blocked |
+| worker2 | Blocked |
+| worker3 | Blocked |
+| Remaining LAN hosts | Blocked |
+
+### Administrative Workflow
+
+Worker nodes are not directly reachable from the VPN network.
+
+Administrative access is performed through the Kubernetes control plane node, allowing cluster management without exposing worker nodes to remote VPN clients.
+
+### Restricted Routing
+
+WireGuard peer configuration uses constrained route definitions (`AllowedIPs`) to limit reachable destinations.
+
+Only approved administrative resources are advertised through the tunnel rather than the full LAN network.
+
+This approach reinforces least-privilege access at both the routing and firewall layers.
