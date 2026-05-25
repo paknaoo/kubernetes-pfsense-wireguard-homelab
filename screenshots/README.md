@@ -6,7 +6,16 @@ The screenshots provide visual proof of cluster health, metrics collection, ingr
 
 ## Screenshots
 
-Screenshots will be added as validation evidence for the lab.
+| File | Purpose |
+|------|------|
+| [`kubectl-get-nodes.png`](kubectl-get-nodes.png) | Shows all Kubernetes nodes in `Ready` state |
+| [`kubectl-top-nodes.png`](kubectl-top-nodes.png) | Shows metrics-server collecting node metrics |
+| [`kubectl-top-pods.png`](kubectl-top-pods.png) | Shows pod metrics across namespaces |
+| [`envoy-gateway-curl.png`](envoy-gateway-curl.png) | Shows successful Envoy Gateway / HTTPRoute validation using `curl` |
+| [`envoy-gateway-resources.png`](envoy-gateway-resources.png) | Shows Gateway API and Envoy Gateway Kubernetes resources |
+| [`wireguard-handshake.png`](wireguard-handshake.png) | Shows successful WireGuard VPN tunnel establishment |
+| [`pfsense-aliases.png`](pfsense-aliases.png) | Shows pfSense aliases used for the least-privilege access model |
+| [`pfsense-rules-wg.png`](pfsense-rules-wg.png) | Shows restricted WireGuard firewall policy on pfSense |
 
 ## Notes
 
