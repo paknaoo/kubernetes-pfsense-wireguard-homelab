@@ -107,3 +107,39 @@ Successful restoration of:
 - CoreDNS startup
 - normal Kubernetes workload operation
 
+## metrics-server Compatibility
+
+### Problem
+
+metrics-server was unable to collect resource metrics from cluster nodes during deployment.
+
+As a result, standard Kubernetes metrics queries were unavailable.
+
+### Cause
+
+Compatibility differences between metrics-server and kubelet TLS behaviour prevented successful metrics collection within the lab environment.
+
+### Resolution
+
+metrics-server configuration was adjusted to accommodate the kubelet TLS behaviour used by the cluster.
+
+Following the configuration change, metrics collection resumed successfully.
+
+### Outcome
+
+Validated functionality:
+
+```bash
+kubectl top nodes
+kubectl top pods -A
+```
+
+## Lessons Learned
+
+Key takeaways from the project included:
+
+- predictable infrastructure addressing is critical for stable Kubernetes operation
+- Kubernetes networking issues often propagate into dependent platform components
+- validating root causes is more effective than applying configuration changes blindly
+- self-managed Kubernetes environments require careful integration between networking, runtime, and platform services
+- operational testing is essential after every infrastructure change
