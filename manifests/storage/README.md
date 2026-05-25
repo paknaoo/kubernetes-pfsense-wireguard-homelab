@@ -17,3 +17,12 @@ After applying the manifest, storage can be validated with:
 ```bash
 kubectl apply -f pvc-test.yaml
 kubectl logs local-path-test-pod
+```
+
+Expected output:
+
+```text
+persistent storage test
+```
+
+The Pod remains running temporarily to allow inspection of the mounted volume.
