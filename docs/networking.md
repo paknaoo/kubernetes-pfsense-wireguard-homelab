@@ -120,3 +120,41 @@ A dedicated address pool is allocated from the LAN network for service exposure.
 
 This approach enables Kubernetes services to be exposed within the lab environment without relying on a cloud provider load balancer.
 
+## Gateway & Traffic Flow
+
+Ingress traffic management is implemented using Envoy Gateway and the Kubernetes Gateway API.
+
+The deployment includes:
+
+- GatewayClass
+- Gateway
+- HTTPRoute
+- `httpbin` backend service
+
+Incoming requests are routed through the Envoy Gateway ingress address exposed by MetalLB.
+
+```mermaid
+flowchart LR
+
+    CLIENT["Client Request"]
+
+    INGRESS["Envoy Gateway
+    10.10.10.50"]
+
+    ROUTE["HTTPRoute"]
+
+    APP["httpbin backend"]
+
+    CLIENT --> INGRESS
+    INGRESS --> ROUTE
+    ROUTE --> APP
+```
+
+Validated request flow:
+
+```bash
+curl -H "Host: app.lab.local" http://10.10.10.50/get
+```
+
+Successful responses confirm correct integration between MetalLB, Envoy Gateway, Gateway API resources, and backend service routing.
+
