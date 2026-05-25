@@ -8,6 +8,19 @@ The environment combines a kubeadm-based Kubernetes cluster, pfSense firewalling
 
 The project is designed as a practical platform for deploying, validating, and troubleshooting production-style infrastructure components.
 
+## Contents
+
+## Contents
+
+- [Technology Stack](#technology-stack)
+- [Architecture](#architecture)
+- [Network Design](#network-design)
+- [Kubernetes Platform](#kubernetes-platform)
+- [Secure Remote Administration](#secure-remote-administration)
+- [Validation](#validation)
+- [Key Troubleshooting Outcomes](#key-troubleshooting-outcomes)
+- [Repository Structure](#repository-structure)
+
 ## Technology Stack
 
 ### Infrastructure
@@ -212,3 +225,22 @@ The project involved diagnosing and resolving several infrastructure and Kuberne
 - Kubernetes storage validation using persistent test workloads
 
 Troubleshooting and implementation notes are documented in the supporting project documentation.
+
+## Repository Structure
+
+```text
+.
+├── README.md
+├── docs/
+│   ├── architecture.md
+│   ├── networking.md
+│   ├── security.md
+│   ├── kubernetes.md
+│   └── troubleshooting.md
+├── diagrams/
+├── manifests/
+├── configs/
+└── screenshots/
+```
+
+Supporting documentation, diagrams, manifests, and sanitised configuration examples are organised separately to keep the main README concise and easy to review.
