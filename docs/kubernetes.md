@@ -76,3 +76,33 @@ Several supporting components were installed to provide networking, DNS, metrics
 
 Core platform services are running successfully across the cluster and support networking, observability, and ingress workflows.
 
+## Storage
+
+Persistent storage is provided using `local-path-provisioner`.
+
+This provides a lightweight storage layer suitable for lab workloads and persistent volume testing in a self-managed Kubernetes environment.
+
+Storage validation included:
+
+- StorageClass availability
+- PVC creation
+- test Pod deployment
+- persistent write verification
+
+This confirmed that workloads can request and use persistent storage successfully within the cluster.
+
+## Observability
+
+Cluster resource metrics are provided through `metrics-server`.
+
+The deployment enables visibility into node and workload resource consumption through standard Kubernetes tooling.
+
+Validated functionality:
+
+```bash
+kubectl top nodes
+kubectl top pods -A
+```
+
+Deployment adjustments were applied to ensure compatibility between metrics-server and kubelet TLS behaviour within the lab environment.
+
