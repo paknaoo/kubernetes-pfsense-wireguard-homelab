@@ -115,3 +115,21 @@ WireGuard peer configuration uses constrained route definitions (`AllowedIPs`) t
 Only approved administrative resources are advertised through the tunnel rather than the full LAN network.
 
 This approach reinforces least-privilege access at both the routing and firewall layers.
+
+## Security Validation
+
+The security model has been validated through practical administration and connectivity testing.
+
+Verified behaviour:
+
+| Test | Result |
+|------|------|
+| WireGuard tunnel establishment | Successful |
+| VPN routing through pfSense | Successful |
+| pfSense GUI access from VPN | Successful |
+| Kubernetes control plane access from VPN | Successful |
+| Envoy Gateway ingress access from VPN | Successful |
+| Direct worker node access from VPN | Blocked |
+| General LAN access from VPN | Blocked |
+
+The validated behaviour confirms that remote administration remains functional while preserving segmented access boundaries and least-privilege controls.
