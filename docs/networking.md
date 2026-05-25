@@ -84,3 +84,18 @@ mgmt01 → WireGuard VPN → pfSense → approved internal resources
 
 This routing model allows secure remote administration while keeping internal Kubernetes services isolated from direct external access.
 
+## Kubernetes Networking
+
+Kubernetes pod networking is provided by Calico.
+
+Calico enables pod-to-pod communication across the Debian cluster nodes and integrates with the kubeadm-based cluster deployment.
+
+CoreDNS is running successfully and provides internal Kubernetes service discovery.
+
+### Container Networking Interface
+
+The cluster uses the standard Kubernetes CNI model for pod networking.
+
+During deployment, a CNI plugin path mismatch was identified and resolved by aligning the expected CNI binary location with the installed plugin path.
+
+This restored pod networking and allowed CoreDNS and other cluster workloads to start correctly.
