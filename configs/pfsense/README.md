@@ -13,6 +13,7 @@ It is responsible for:
 - firewall policy enforcement
 - WireGuard VPN termination
 - controlled administrative access
+- controlled Internet egress for VPN clients through OPT1
 
 ## Interfaces
 
@@ -21,6 +22,17 @@ It is responsible for:
 | WAN / OUTSIDE | `192.168.50.254` | External / hypervisor-facing network |
 | LAN | `10.10.10.254` | Kubernetes cluster network |
 | WireGuard | `10.20.20.1` | VPN tunnel endpoint |
+| OPT1 | DHCP | Internet uplink for VPN egress |
+
+## Default Gateway
+
+pfSense uses the OPT1 DHCP gateway as the default gateway for Internet egress.
+
+| Setting | Value |
+|------|------|
+| Default gateway | `OPT1_DHCP` |
+
+This ensures full-tunnel VPN Internet traffic exits through the real Internet uplink rather than the lab OUTSIDE network.
 
 ## DHCP Static Mappings
 
@@ -35,17 +47,47 @@ Static DHCP mappings are used for Kubernetes nodes to keep cluster addressing pr
 
 ## Firewall Model
 
-The firewall model follows a least-privilege approach.
+The firewall model follows a least-privilege approach for internal LAN access.
 
-WAN exposure is limited to WireGuard access from the management workstation.
+WAN / OUTSIDE exposure is limited to WireGuard access from the management workstation.
+
+Internet egress from the WireGuard subnet is handled separately through controlled firewall rules and outbound NAT via OPT1.
+
+### WAN / OUTSIDE Rule
 
 | Source | Destination | Protocol | Purpose |
 |------|------|------|------|
-| `192.168.50.10` | pfSense WAN | UDP 51820 | WireGuard VPN access |
+| `192.168.50.10` | pfSense WAN address | UDP 51820 | WireGuard VPN access |
 
-VPN clients are restricted to approved management targets through pfSense firewall policy and aliases.
+### VPN Internet Egress
 
-## Alias Model
+WireGuard clients are permitted to use controlled outbound Internet access through pfSense OPT1.
+
+| Source | Destination | Protocol / Ports | Purpose |
+|------|------|------|------|
+| `10.20.20.0/24` | any | TCP/UDP 53 | DNS |
+| `10.20.20.0/24` | any | TCP 80 | HTTP |
+| `10.20.20.0/24` | any | TCP 443 | HTTPS |
+| `10.20.20.0/24` | any | UDP 123 | NTP |
+| `10.20.20.0/24` | any | ICMP | Optional connectivity testing |
+
+VPN clients remain restricted to approved internal management targets through pfSense firewall policy and aliases.
+
+## Outbound NAT
+
+Outbound NAT is required for WireGuard client traffic to reach the Internet through OPT1.
+
+The lab uses Hybrid Outbound NAT with a rule for the WireGuard subnet.
+
+| Interface | Source | Destination | Translation |
+|------|------|------|------|
+| OPT1 | `10.20.20.0/24` | any | OPT1 address |
+
+Without this NAT rule, WireGuard access to internal LAN resources works, but Internet egress from the VPN client fails.
+
+## Alias Model for Internal Access
+
+pfSense aliases are used to keep internal VPN access rules readable and easier to manage.
 
 | Alias | Value | Purpose |
 |------|------|------|
@@ -58,7 +100,9 @@ VPN clients are restricted to approved management targets through pfSense firewa
 
 ## VPN Access Policy
 
-The WireGuard firewall policy permits VPN clients to access only approved management destinations.
+The WireGuard firewall policy restricts internal LAN access to approved management destinations.
+
+Internet egress is allowed separately through controlled OPT1 firewall rules and outbound NAT.
 
 Allowed from VPN:
 
