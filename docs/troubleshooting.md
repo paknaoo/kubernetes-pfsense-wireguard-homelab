@@ -229,6 +229,8 @@ Key takeaways from the project included:
 
 - predictable infrastructure addressing is critical for stable Kubernetes operation
 - Kubernetes networking issues often propagate into dependent platform components
+- self-managed Kubernetes environments require careful integration between networking, runtime, firewalling, and platform services
+- WireGuard full-tunnel routing may use policy routing tables rather than the main routing table
+- outbound NAT is required when routing VPN client traffic to the Internet through a dedicated pfSense uplink
 - validating root causes is more effective than applying configuration changes blindly
-- self-managed Kubernetes environments require careful integration between networking, runtime, and platform services
 - operational testing is essential after every infrastructure change
