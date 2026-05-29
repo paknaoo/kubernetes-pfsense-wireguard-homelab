@@ -4,7 +4,7 @@
 
 A security-focused homelab built to explore Kubernetes platform engineering, network segmentation, and secure remote administration.
 
-The environment combines a kubeadm-based Kubernetes cluster, pfSense firewalling, WireGuard VPN access, Envoy Gateway, MetalLB, and a least-privilege access model running on VMware Workstation.
+The environment combines a kubeadm-based Kubernetes cluster, pfSense firewalling, WireGuard VPN access, Envoy Gateway, MetalLB, controlled Internet egress through pfSense OPT1, and a least-privilege access model running on VMware Workstation.
 
 The project is designed as a practical platform for deploying, validating, and troubleshooting production-style infrastructure components.
 
@@ -102,8 +102,11 @@ The environment uses three isolated network segments:
 | OUTSIDE | External / hypervisor-facing network | `192.168.50.0/24` |
 | LAN | Kubernetes cluster network | `10.10.10.0/24` |
 | WG | WireGuard VPN network | `10.20.20.0/24` |
+| OPT1 | Internet uplink for controlled VPN egress | DHCP |
 
-pfSense provides routing, DHCP services for the LAN segment, firewall enforcement, and WireGuard VPN termination.
+pfSense provides routing, DHCP services for the LAN segment, firewall enforcement, WireGuard VPN termination, and controlled Internet egress through the OPT1 uplink.
+
+WireGuard is configured in full-tunnel mode on the management workstation, while pfSense policy keeps internal LAN access restricted to approved management targets.
 
 Static addressing is used for Kubernetes nodes to ensure predictable cluster operation and stable service exposure.
 
@@ -168,7 +171,9 @@ The management workstation (`mgmt01`) connects through the VPN network and is pe
 
 Access to Kubernetes worker nodes and the remainder of the LAN segment is intentionally blocked.
 
-The WAN interface is kept minimally exposed, with WireGuard acting as the primary remote administration path.
+Internet access from the VPN client is routed through pfSense using the OPT1 uplink and outbound NAT, while internal LAN access remains restricted.
+
+The WAN / OUTSIDE interface is kept minimally exposed, with WireGuard acting as the primary remote administration path into the lab.
 
 ## Validation
 
@@ -204,6 +209,8 @@ Verified functionality:
 - Route propagation through pfSense
 - Automatic tunnel startup after reboot
 - Restricted access model enforced
+- Full-tunnel Internet egress through pfSense OPT1
+- Outbound NAT for WireGuard client traffic
 
 Validated remote access from `mgmt01`:
 
@@ -214,6 +221,7 @@ Validated remote access from `mgmt01`:
 | Envoy Gateway ingress | Accessible |
 | Worker nodes | Blocked |
 | Remaining LAN hosts | Blocked |
+| Internet egress through VPN | Accessible |
 
 ## Key Troubleshooting Outcomes
 
