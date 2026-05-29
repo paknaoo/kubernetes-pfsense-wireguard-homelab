@@ -6,7 +6,7 @@ This document describes the high-level architecture of the Kubernetes, pfSense, 
 
 The environment is designed around segmented networking, controlled administrative access, and a self-managed Kubernetes platform running on VMware Workstation.
 
-pfSense provides the core network boundary, while Kubernetes platform services are exposed internally through MetalLB and Envoy Gateway.
+pfSense provides the core network boundary, WireGuard VPN termination, controlled Internet egress through OPT1, and internal Kubernetes service exposure through MetalLB and Envoy Gateway.
 
 ## Contents
 
@@ -19,51 +19,41 @@ pfSense provides the core network boundary, while Kubernetes platform services a
 
 ## High-Level Architecture
 
-The lab is built around pfSense as the central routing, firewall, and VPN component.
+The lab is built around pfSense as the central routing, firewall, VPN, and egress control component.
 
-Kubernetes nodes run inside the LAN segment, while the management workstation connects through WireGuard for restricted administrative access.
+Kubernetes nodes run inside the LAN segment, while the management workstation connects through WireGuard for restricted administrative access and full-tunnel Internet egress through the OPT1 uplink.
 
 ```mermaid
 flowchart LR
 
     subgraph OUTSIDE["OUTSIDE Network - 192.168.50.0/24"]
-        MGMT["mgmt01
-        Management Workstation
-        192.168.50.10"]
+        MGMT["mgmt01<br>Management Workstation<br>192.168.50.10"]
     end
 
-    PFSENSE["pfSense
-    WAN: 192.168.50.254
-    LAN: 10.10.10.254
-    WG: 10.20.20.1"]
+    PFSENSE["pfSense<br>WAN: 192.168.50.254<br>LAN: 10.10.10.254<br>WG: 10.20.20.1<br>OPT1: DHCP Internet uplink"]
+
+    INTERNET["Internet"]
 
     subgraph WG["WireGuard Network - 10.20.20.0/24"]
-        VPNCLIENT["mgmt01 VPN
-        10.20.20.2"]
+        VPNCLIENT["mgmt01 VPN<br>10.20.20.2<br>Full tunnel"]
     end
 
     subgraph LAN["LAN Network - 10.10.10.0/24"]
-        MASTER["k8s-master
-        10.10.10.10"]
-
-        W1["worker1
-        10.10.10.11"]
-
-        W2["worker2
-        10.10.10.12"]
-
-        W3["worker3
-        10.10.10.13"]
-
-        INGRESS["Envoy Gateway / MetalLB
-        10.10.10.50"]
+        MASTER["k8s-master<br>10.10.10.10"]
+        W1["worker1<br>10.10.10.11"]
+        W2["worker2<br>10.10.10.12"]
+        W3["worker3<br>10.10.10.13"]
+        INGRESS["Envoy Gateway / MetalLB<br>10.10.10.50"]
     end
 
     MGMT --> PFSENSE
     MGMT --> VPNCLIENT
     VPNCLIENT --> PFSENSE
+
     PFSENSE --> MASTER
     PFSENSE --> INGRESS
+    PFSENSE --> INTERNET
+
     MASTER --> W1
     MASTER --> W2
     MASTER --> W3
@@ -76,7 +66,8 @@ The lab runs on VMware Workstation and is composed of dedicated virtual machines
 | Component | Role |
 |------|------|
 | VMware Workstation | Local hypervisor platform |
-| pfSense | Router, firewall, DHCP server, and WireGuard VPN endpoint |
+| pfSense | Router, firewall, DHCP server, WireGuard VPN endpoint, and controlled Internet egress gateway |
+| OPT1 uplink | pfSense Internet egress interface used for WireGuard full-tunnel traffic |
 | mgmt01 | External management workstation and VPN client |
 | k8s-master | Kubernetes control plane node |
 | worker1 | Kubernetes worker node |
@@ -87,17 +78,20 @@ This separation keeps network control, administration, and Kubernetes workloads 
 
 ## Network Architecture
 
-The environment uses three primary network segments.
+The environment uses three primary network segments and a dedicated OPT1 Internet uplink.
 
-| Network | Address Range | Purpose |
+| Network / Interface | Address Range | Purpose |
 |------|------|------|
 | OUTSIDE | `192.168.50.0/24` | External / hypervisor-facing network |
 | LAN | `10.10.10.0/24` | Kubernetes cluster network |
-| WG | `10.20.20.0/24` | WireGuard administrative network |
+| WG | `10.20.20.0/24` | WireGuard VPN network |
+| OPT1 | DHCP | Internet uplink for controlled VPN egress |
 
 pfSense routes traffic between these segments and enforces firewall policy at the network boundaries.
 
 Kubernetes services are exposed inside the LAN network using MetalLB, with the current Envoy Gateway ingress address allocated as `10.10.10.50`.
+
+WireGuard is configured in full-tunnel mode for `mgmt01`, allowing Internet traffic to egress through pfSense via the OPT1 uplink while keeping internal LAN access restricted to approved targets.
 
 More detailed routing, service exposure, and traffic flow notes are covered in [Networking Design](networking.md).
 
@@ -127,36 +121,38 @@ More detailed Kubernetes platform notes are covered in [Kubernetes Platform](kub
 
 Remote administration is performed from `mgmt01` through a WireGuard VPN tunnel terminated on pfSense.
 
-The VPN client is not granted broad LAN access. Instead, access is restricted to approved management targets. Worker nodes are managed through the Kubernetes control plane node rather than being directly reachable from the VPN network.
+The VPN client uses full-tunnel routing for Internet egress through pfSense OPT1, while access to internal LAN resources remains restricted to approved management targets.
 
 ```mermaid
 flowchart TB
 
     subgraph OUTSIDE["OUTSIDE Network"]
-        MGMT["mgmt01<br/>Management Workstation"]
+        MGMT["mgmt01<br>Management Workstation"]
     end
 
     subgraph VPN["WireGuard VPN"]
-        WG["VPN Tunnel<br/>10.20.20.0/24"]
+        WG["VPN Tunnel<br>10.20.20.0/24<br>Full tunnel"]
     end
 
     subgraph FIREWALL["pfSense Boundary"]
-        PFSENSE["pfSense<br/>Firewall / Router / VPN"]
+        PFSENSE["pfSense<br>Firewall / Router / VPN"]
     end
 
-    subgraph ALLOWED["Approved VPN Targets"]
-        GUI["pfSense GUI<br/>10.10.10.254"]
-        MASTER["k8s-master<br/>10.10.10.10<br/>Control Plane / Admin Entry Point"]
-        INGRESS["Envoy Gateway<br/>10.10.10.50"]
+    subgraph ALLOWED["Approved Internal VPN Targets"]
+        GUI["pfSense GUI<br>10.10.10.254"]
+        MASTER["k8s-master<br>10.10.10.10<br>Control Plane / Admin Entry Point"]
+        INGRESS["Envoy Gateway<br>10.10.10.50"]
     end
 
     subgraph WORKERS["Worker Nodes"]
-        W1["worker1<br/>10.10.10.11"]
-        W2["worker2<br/>10.10.10.12"]
-        W3["worker3<br/>10.10.10.13"]
+        W1["worker1<br>10.10.10.11"]
+        W2["worker2<br>10.10.10.12"]
+        W3["worker3<br>10.10.10.13"]
     end
 
-    BLOCKED["Remaining LAN<br/>Blocked from VPN"]
+    OPT1["OPT1<br>Internet Uplink"]
+    INTERNET["Internet"]
+    BLOCKED["Remaining LAN<br>Blocked from VPN"]
 
     MGMT --> WG
     WG --> PFSENSE
@@ -169,15 +165,20 @@ flowchart TB
     MASTER --> W2
     MASTER --> W3
 
+    PFSENSE --> OPT1
+    OPT1 --> INTERNET
+
     PFSENSE -. direct VPN access blocked .-> WORKERS
     PFSENSE -. blocked .-> BLOCKED
 ```
-
 This model allows remote administration of the cluster while keeping worker nodes and the wider LAN inaccessible directly from the VPN network.
 
 Worker administration is performed through the Kubernetes control plane node, preserving the restricted access model while still allowing practical cluster management.
 
-More detailed firewall and VPN notes are covered in [Security Model](access-control.md).
+Internet traffic from `mgmt01` is routed through the WireGuard tunnel and exits through pfSense using the OPT1 uplink.
+
+More detailed firewall and VPN notes are covered in [Access Control](access-control.md).
+
 
 ## Architecture Validation
 
@@ -192,6 +193,8 @@ The architecture has been validated across infrastructure, networking, Kubernete
 | Service exposure | MetalLB assigning ingress address from LAN pool |
 | Gateway routing | Envoy Gateway routing traffic through Gateway API resources |
 | VPN administration | WireGuard tunnel established from `mgmt01` |
+| Internet egress | WireGuard full-tunnel traffic routed through pfSense OPT1 |
+| Outbound NAT | WireGuard subnet translated through the OPT1 interface |
 | Access control | VPN access restricted to approved management targets |
 
 The validated architecture provides a working self-managed Kubernetes environment with controlled service exposure and restricted administrative access.
