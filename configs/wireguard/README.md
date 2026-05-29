@@ -6,18 +6,33 @@ The real private keys and endpoint details are intentionally not included.
 
 ## Purpose
 
-WireGuard provides the primary remote administration path into the lab environment.
+WireGuard provides the primary remote administration path into the lab and supports full-tunnel Internet egress through pfSense.
 
-The VPN client is configured with restricted `AllowedIPs` so that it can reach only approved management targets rather than the full LAN network.
+The VPN client uses full-tunnel routing so that Internet traffic is routed through pfSense and exits through the OPT1 uplink.
 
-## Allowed Routes
+Internal LAN access remains restricted by pfSense firewall policy and aliases.
 
-| Route | Purpose |
+## Routing Model
+
+| Setting | Value |
 |------|------|
-| `10.10.10.10/32` | Kubernetes control plane |
-| `10.10.10.50/32` | Envoy Gateway / MetalLB ingress |
-| `10.10.10.254/32` | pfSense LAN GUI |
-| `10.20.20.0/24` | WireGuard VPN subnet |
+| Client VPN address | `10.20.20.2/24` |
+| pfSense WireGuard address | `10.20.20.1/24` |
+| AllowedIPs | `0.0.0.0/0` |
+| DNS | `10.10.10.254` |
+| Internet egress | pfSense OPT1 uplink |
+
+## Internal Access Control
+
+Although the WireGuard client uses full-tunnel routing, internal LAN access is restricted separately by pfSense firewall policy.
+
+Allowed internal targets include:
+
+| Target | Purpose |
+|------|------|
+| `10.10.10.10` | Kubernetes control plane |
+| `10.10.10.50` | Envoy Gateway / MetalLB ingress |
+| `10.10.10.254` | pfSense LAN GUI |
 
 ## Files
 
