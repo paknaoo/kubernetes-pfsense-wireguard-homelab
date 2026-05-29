@@ -38,7 +38,7 @@ Allowed internal targets include:
 
 | File | Purpose |
 |------|------|
-| `wg0.conf.example` | Sanitised WireGuard client configuration example |
+| [`wg0.conf.example`](wg0.conf.example) | Sanitised WireGuard client configuration example using full-tunnel routing |
 
 ## Notes
 
