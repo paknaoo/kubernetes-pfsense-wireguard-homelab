@@ -12,6 +12,7 @@ The troubleshooting process focused on identifying root causes, validating fixes
 - [Calico Deployment Issues](#calico-deployment-issues)
 - [CNI Path Mismatch](#cni-path-mismatch)
 - [metrics-server Compatibility](#metrics-server-compatibility)
+- [WireGuard Full-Tunnel Internet Egress](#wireguard-full-tunnel-internet-egress)
 - [Lessons Learned](#lessons-learned)
 
 ## DHCP & Addressing Issues
@@ -133,6 +134,94 @@ Validated functionality:
 kubectl top nodes
 kubectl top pods -A
 ```
+
+## WireGuard Full-Tunnel Internet Egress
+
+### Problem
+
+WireGuard connectivity to internal lab resources worked, but Internet access from `mgmt01` through the VPN tunnel failed.
+
+The goal was to route `mgmt01` Internet traffic through WireGuard, pfSense, and the OPT1 Internet uplink.
+
+Expected flow:
+
+```text
+mgmt01 → WireGuard → pfSense → OPT1 → Internet
+```
+
+### Cause
+
+Several issues contributed to the failure:
+
+- missing required Linux tools on `mgmt01`
+- `wg-quick` unable to locate required binaries due to PATH issues
+- missing outbound NAT rule for the WireGuard subnet
+- incorrect assumption that WireGuard full-tunnel routing would appear in the main routing table
+
+Required tools included:
+
+```text
+wg
+sysctl
+iptables-restore
+```
+
+WireGuard full-tunnel routing used policy routing through table `51820`, rather than a standard `default dev wg0` route in the main routing table.
+
+### Resolution
+
+The required packages were installed on `mgmt01`:
+
+```bash
+sudo apt install -y wireguard-tools iptables procps
+```
+
+The PATH issue was resolved by ensuring system binaries were available from:
+
+```text
+/usr/sbin
+/sbin
+```
+
+pfSense was configured with Hybrid Outbound NAT and a NAT rule translating the WireGuard subnet through the OPT1 interface.
+
+| Interface | Source | Destination | Translation |
+|------|------|------|------|
+| OPT1 | `10.20.20.0/24` | any | OPT1 address |
+
+The pfSense default gateway was set to:
+
+```text
+OPT1_DHCP
+```
+
+### Validation
+
+The tunnel and routing behaviour were validated using:
+
+```bash
+sudo wg
+ip route show table 51820
+ip rule
+curl -I https://google.com
+curl ifconfig.me
+```
+
+Expected routing behaviour:
+
+```text
+table 51820:
+default dev wg0
+```
+
+### Outcome
+
+Successful restoration of:
+
+- WireGuard full-tunnel routing
+- Internet access through pfSense OPT1
+- outbound NAT for the WireGuard subnet
+- continued restricted access to internal Kubernetes resources
 
 ## Lessons Learned
 
