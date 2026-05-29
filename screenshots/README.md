@@ -16,6 +16,10 @@ The screenshots provide visual proof of cluster health, metrics collection, ingr
 | [`wireguard-handshake.png`](wireguard-handshake.png) | Shows successful WireGuard VPN tunnel establishment |
 | [`pfsense-aliases.png`](pfsense-aliases.png) | Shows pfSense aliases used for the least-privilege access model |
 | [`pfsense-rules-wg.png`](pfsense-rules-wg.png) | Shows restricted WireGuard firewall policy on pfSense |
+| [`wireguard-full-tunnel-route.png`](wireguard-full-tunnel-route.png) | Shows WireGuard full-tunnel policy routing on `mgmt01` |
+| [`pfsense-outbound-nat-opt1.png`](pfsense-outbound-nat-opt1.png) | Shows outbound NAT translating the WireGuard subnet through OPT1 |
+| [`pfsense-opt1-gateway.png`](pfsense-opt1-gateway.png) | Shows pfSense using the OPT1 DHCP gateway for Internet egress |
+| [`vpn-internet-egress-curl.png`](vpn-internet-egress-curl.png) | Shows Internet access from `mgmt01` through the WireGuard tunnel |
 
 ## Notes
 
