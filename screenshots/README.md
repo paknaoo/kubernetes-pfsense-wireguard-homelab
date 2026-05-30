@@ -20,6 +20,10 @@ The screenshots provide visual proof of cluster health, metrics collection, ingr
 | [`pfsense-outbound-nat-opt1.png`](pfsense-outbound-nat-opt1.png) | Shows outbound NAT translating the WireGuard subnet through OPT1 |
 | [`pfsense-opt1-gateway.png`](pfsense-opt1-gateway.png) | Shows pfSense using the OPT1 DHCP gateway for Internet egress |
 | [`vpn-internet-egress-curl.png`](vpn-internet-egress-curl.png) | Shows Internet access from `mgmt01` through the WireGuard tunnel |
+| [`ssh-proxyjump-workers.png`](ssh-proxyjump-workers.png) | Shows SSH access to worker nodes through ProxyJump via `k8s-master` |
+| [`direct-worker-ssh-blocked.png`](direct-worker-ssh-blocked.png) | Shows direct SSH access from `mgmt01` to worker nodes blocked |
+| [`fail2ban-status-sshd.png`](fail2ban-status-sshd.png) | Shows active Fail2ban SSH jail status |
+| [`sshd-hardening-config.png`](sshd-hardening-config.png) | Shows effective SSH daemon hardening settings |
 
 ## Notes
 
