@@ -41,6 +41,8 @@ The project is designed as a practical platform for deploying, validating, and t
 ### Networking & Access
 
 - WireGuard VPN
+- OpenSSH
+- Fail2ban
 - Envoy Gateway
 - Gateway API
 - MetalLB
@@ -171,6 +173,8 @@ The management workstation (`mgmt01`) connects through the VPN network and is pe
 
 Access to Kubernetes worker nodes and the remainder of the LAN segment is intentionally blocked.
 
+SSH administration follows a VPN + jump host model. The management workstation connects directly only to the Kubernetes control plane node, while worker nodes are administered through SSH ProxyJump via the control plane.
+
 Internet access from the VPN client is routed through pfSense using the OPT1 uplink and outbound NAT, while internal LAN access remains restricted.
 
 The WAN / OUTSIDE interface is kept minimally exposed, with WireGuard acting as the primary remote administration path into the lab.
@@ -243,7 +247,8 @@ Detailed supporting documentation is available in the `docs/` directory:
 |------|------|
 | [Architecture](docs/architecture.md) | High-level lab architecture, components, and administration flow |
 | [Networking Design](docs/networking.md) | Network segments, routing model, MetalLB, and Gateway traffic flow |
-| [Security Model](docs/access-control.md) | pfSense firewall model, WireGuard access, and least-privilege controls |
+| [Access Control](docs/access-control.md) | pfSense firewall model, WireGuard access, and least-privilege controls |
+| [SSH Hardening](docs/ssh-hardening.md) | SSH jump host model, key-based authentication, sshd hardening, and Fail2ban protection |
 | [Kubernetes Platform](docs/kubernetes.md) | Cluster topology, platform components, storage, observability, and ingress |
 | [Troubleshooting & Lessons Learned](docs/troubleshooting.md) | Key issues resolved during deployment and validation |
 | [Screenshots](screenshots/README.md) | Selected validation screenshots for cluster health, metrics, ingress, VPN, and firewall policy |
@@ -257,6 +262,7 @@ Detailed supporting documentation is available in the `docs/` directory:
 │   ├── architecture.md
 │   ├── networking.md
 │   ├── access-control.md
+│   ├── ssh-hardening.md
 │   ├── kubernetes.md
 │   └── troubleshooting.md
 ├── manifests/
