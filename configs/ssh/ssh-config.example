@@ -1,0 +1,18 @@
+Host adam10
+    HostName 10.10.10.10
+    User adam
+
+Host adam11
+    HostName 10.10.10.11
+    User adam
+    ProxyJump adam10
+
+Host adam12
+    HostName 10.10.10.12
+    User adam
+    ProxyJump adam10
+
+Host adam13
+    HostName 10.10.10.13
+    User adam
+    ProxyJump adam10
