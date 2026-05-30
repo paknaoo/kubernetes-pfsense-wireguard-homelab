@@ -154,9 +154,13 @@ mgmt01 → WireGuard → pfSense → OPT1 → Internet
 Several issues contributed to the failure:
 
 - missing required Linux tools on `mgmt01`
-- `wg-quick` unable to locate required binaries due to PATH issues
+- `wg-quick` unable to locate required binaries because root was entered with `su` instead of `su -`
 - missing outbound NAT rule for the WireGuard subnet
 - incorrect assumption that WireGuard full-tunnel routing would appear in the main routing table
+
+Using `su` without `-` did not load the full root login environment, which meant paths such as `/usr/sbin` were missing from `PATH`.
+
+As a result, tools required by `wg-quick` appeared unavailable even when the relevant packages were already installed.
 
 Required tools included:
 
@@ -170,18 +174,32 @@ WireGuard full-tunnel routing used policy routing through table `51820`, rather 
 
 ### Resolution
 
-The required packages were installed on `mgmt01`:
+The required packages were verified or installed on `mgmt01`:
 
 ```bash
 sudo apt install -y wireguard-tools iptables procps
 ```
 
-The PATH issue was resolved by ensuring system binaries were available from:
+The root environment issue was resolved by using a proper root login shell:
+
+```bash
+su -
+```
+
+instead of:
+
+```bash
+su
+```
+
+Using `su -` loads the root login environment, including system paths such as:
 
 ```text
 /usr/sbin
 /sbin
 ```
+
+This allowed tools such as `sysctl` and `iptables-restore` to be found correctly by `wg-quick`.
 
 pfSense was configured with Hybrid Outbound NAT and a NAT rule translating the WireGuard subnet through the OPT1 interface.
 
@@ -230,6 +248,7 @@ Key takeaways from the project included:
 - predictable infrastructure addressing is critical for stable Kubernetes operation
 - Kubernetes networking issues often propagate into dependent platform components
 - self-managed Kubernetes environments require careful integration between networking, runtime, firewalling, and platform services
+- using `su` instead of `su -` can result in an incomplete root environment, causing administrative tools in `/usr/sbin` to appear unavailable
 - WireGuard full-tunnel routing may use policy routing tables rather than the main routing table
 - outbound NAT is required when routing VPN client traffic to the Internet through a dedicated pfSense uplink
 - validating root causes is more effective than applying configuration changes blindly
