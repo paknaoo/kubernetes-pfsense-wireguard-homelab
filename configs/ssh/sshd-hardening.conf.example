@@ -1,0 +1,8 @@
+PermitRootLogin no
+PasswordAuthentication no
+PubkeyAuthentication yes
+HostbasedAuthentication no
+AllowUsers adam
+MaxAuthTries 3
+LoginGraceTime 30
+X11Forwarding no
