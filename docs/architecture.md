@@ -15,6 +15,7 @@ pfSense provides the core network boundary, WireGuard VPN termination, controlle
 - [Network Architecture](#network-architecture)
 - [Kubernetes Architecture](#kubernetes-architecture)
 - [Administration Flow](#administration-flow)
+- [SSH Administration Flow](#ssh-administration-flow)
 - [Architecture Validation](#architecture-validation)
 
 ## High-Level Architecture
@@ -179,6 +180,42 @@ Internet traffic from `mgmt01` is routed through the WireGuard tunnel and exits 
 
 More detailed firewall and VPN notes are covered in [Access Control](access-control.md).
 
+## SSH Administration Flow
+
+SSH administration follows a VPN + jump host model.
+
+The management workstation connects directly only to the Kubernetes control plane node. Worker nodes are administered through SSH ProxyJump using `k8s-master` as the jump host.
+
+```mermaid
+flowchart TB
+
+    MGMT["mgmt01<br>Management Workstation"]
+
+    WG["WireGuard VPN"]
+
+    MASTER["k8s-master<br>10.10.10.10<br>SSH Jump Host"]
+
+    subgraph WORKERS["Worker Nodes"]
+        W1["worker1<br>10.10.10.11"]
+        W2["worker2<br>10.10.10.12"]
+        W3["worker3<br>10.10.10.13"]
+    end
+
+    BLOCKED["Direct SSH to workers<br>Blocked"]
+
+    MGMT --> WG
+    WG --> MASTER
+
+    MASTER --> W1
+    MASTER --> W2
+    MASTER --> W3
+
+    WG -. blocked .-> BLOCKED
+```
+
+This model supports practical worker administration while avoiding direct SSH exposure of worker nodes to the VPN client.
+
+More detailed SSH hardening notes are covered in [SSH Hardening](ssh-hardening.md).
 
 ## Architecture Validation
 
@@ -196,5 +233,8 @@ The architecture has been validated across infrastructure, networking, Kubernete
 | Internet egress | WireGuard full-tunnel traffic routed through pfSense OPT1 |
 | Outbound NAT | WireGuard subnet translated through the OPT1 interface |
 | Access control | VPN access restricted to approved management targets |
+| SSH access model | Worker administration performed through `k8s-master` as jump host |
+| Direct worker SSH | Direct SSH from VPN client to worker nodes blocked |
+| SSH hardening | Key-based SSH, root login disabled, password login disabled, and Fail2ban active |
 
 The validated architecture provides a working self-managed Kubernetes environment with controlled service exposure and restricted administrative access.
