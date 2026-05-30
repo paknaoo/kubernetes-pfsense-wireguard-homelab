@@ -9,6 +9,7 @@ This directory contains sanitised configuration examples and notes for the main 
 | `wireguard/` | Sanitised WireGuard client configuration and restricted routing model |
 | `pfsense/` | pfSense interface, DHCP, firewall, alias, and VPN policy notes |
 | `kubeadm/` | kubeadm-based Kubernetes deployment notes |
+| `ssh/` | SSH client ProxyJump, sshd hardening, and Fail2ban examples |
 
 ## Notes
 
