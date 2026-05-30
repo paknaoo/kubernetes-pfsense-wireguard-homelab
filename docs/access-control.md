@@ -5,6 +5,7 @@
 - [Security Boundaries](#security-boundaries)
 - [Firewall Policy](#firewall-policy)
 - [WireGuard Least-Privilege Access](#wireguard-least-privilege-access)
+- [SSH Administrative Access](#ssh-administrative-access)
 - [Security Validation](#security-validation)
 
 ## Overview
@@ -20,6 +21,8 @@ The design focuses on:
 - segmented network boundaries
 - restricted internal VPN access
 - controlled full-tunnel Internet egress
+- SSH jump host administration
+- key-based host access
 - controlled administrative access
 
 ## Security Boundaries
@@ -168,6 +171,22 @@ Only approved administrative resources are advertised through the tunnel rather 
 
 This approach reinforces least-privilege access at both the routing and firewall layers.
 
+## SSH Administrative Access
+
+SSH access follows the same least-privilege model as the network design.
+
+The management workstation connects directly only to the Kubernetes control plane node. Worker nodes are administered through SSH ProxyJump using `k8s-master` as the jump host.
+
+| Flow | Result |
+|------|------|
+| `mgmt01 → k8s-master` | Allowed |
+| `mgmt01 → worker nodes` | Blocked directly |
+| `mgmt01 → k8s-master → worker nodes` | Allowed through ProxyJump |
+
+SSH access is hardened with key-based authentication, disabled root login, disabled password authentication, restricted allowed users, and Fail2ban protection.
+
+More detailed SSH configuration and validation notes are covered in [SSH Hardening](ssh-hardening.md).
+
 ## Security Validation
 
 The access-control model has been validated through practical administration, connectivity, and Internet egress testing.
@@ -186,5 +205,11 @@ Verified behaviour:
 | Envoy Gateway ingress access from VPN | Successful |
 | Direct worker node access from VPN | Blocked |
 | General LAN access from VPN | Blocked |
+| SSH to control plane from VPN | Successful |
+| Direct SSH to worker nodes from VPN | Blocked |
+| SSH to worker nodes through ProxyJump | Successful |
+| Password-based SSH login | Disabled |
+| Root SSH login | Disabled |
+| Fail2ban SSH protection | Active |
 
 The validated behaviour confirms that remote administration remains functional, Internet egress is available through pfSense, and internal LAN access remains protected by segmented least-privilege controls.
