@@ -273,6 +273,7 @@ Detailed supporting documentation is available in the `docs/` directory:
 ├── configs/
 │   ├── wireguard/
 │   ├── pfsense/
+│   ├── ssh/
 │   └── kubeadm/
 └── screenshots/
 ```
