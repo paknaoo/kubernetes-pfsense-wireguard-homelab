@@ -13,6 +13,7 @@ The troubleshooting process focused on identifying root causes, validating fixes
 - [CNI Path Mismatch](#cni-path-mismatch)
 - [metrics-server Compatibility](#metrics-server-compatibility)
 - [WireGuard Full-Tunnel Internet Egress](#wireguard-full-tunnel-internet-egress)
+- [NetworkPolicy Label Matching](#networkpolicy-label-matching)
 - [Lessons Learned](#lessons-learned)
 
 ## DHCP & Addressing Issues
@@ -241,6 +242,59 @@ Successful restoration of:
 - outbound NAT for the WireGuard subnet
 - continued restricted access to internal Kubernetes resources
 
+## NetworkPolicy Label Matching
+
+### Problem
+
+NetworkPolicy rules were applied successfully, but expected pod communication still timed out.
+
+The policy YAML was valid, but traffic did not match the intended allow rules.
+
+### Cause
+
+NetworkPolicies select pods using labels, not pod names, service names, or IP addresses.
+
+The initial policy used labels such as:
+
+```yaml
+app: frontend
+```
+
+However, the test pods created with `kubectl run` used default labels:
+
+```text
+run=frontend
+run=backend
+```
+
+As a result, the policy did not match the intended pods.
+
+### Resolution
+
+Pod labels were inspected with:
+
+```bash
+kubectl get pods -n security-lab --show-labels
+```
+
+The NetworkPolicies were updated to match the actual labels:
+
+```text
+run=frontend
+run=backend
+```
+
+After correcting the selectors, the intended behaviour was validated:
+
+| Flow | Result |
+|------|------|
+| `backend → frontend` | Allowed |
+| `attacker → frontend` | Denied |
+
+### Outcome
+
+The issue reinforced that NetworkPolicies are label-driven and that label validation should be one of the first troubleshooting steps when policy behaviour does not match expectations.
+
 ## Lessons Learned
 
 Key takeaways from the project included:
@@ -253,3 +307,5 @@ Key takeaways from the project included:
 - outbound NAT is required when routing VPN client traffic to the Internet through a dedicated pfSense uplink
 - validating root causes is more effective than applying configuration changes blindly
 - operational testing is essential after every infrastructure change
+- NetworkPolicies are label-driven, so pod labels should be verified before troubleshooting policy logic
+- `kubectl run` creates default `run=<name>` labels, which may differ from expected `app=<name>` labels
