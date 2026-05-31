@@ -12,6 +12,7 @@ The manifests are organised by component to keep the repository easy to review a
 | `envoy-gateway/` | Gateway API, Envoy Gateway routing, and test backend |
 | `metrics-server/` | Lab-specific metrics-server adjustment and validation notes |
 | `storage/` | Persistent storage validation using local-path-provisioner |
+| `security/` | Kubernetes NetworkPolicy and RBAC security hardening manifests |
 
 
 ## Notes
