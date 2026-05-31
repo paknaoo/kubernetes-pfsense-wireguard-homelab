@@ -24,6 +24,8 @@ The screenshots provide visual proof of cluster health, metrics collection, ingr
 | [`direct-worker-ssh-blocked.png`](direct-worker-ssh-blocked.png) | Shows direct SSH access from `mgmt01` to worker nodes blocked |
 | [`fail2ban-status-sshd.png`](fail2ban-status-sshd.png) | Shows active Fail2ban SSH jail status |
 | [`sshd-hardening-config.png`](sshd-hardening-config.png) | Shows effective SSH daemon hardening settings |
+| [`networkpolicy-backend-allowed.png`](networkpolicy-backend-allowed.png) | Shows allowed `backend → frontend` traffic after explicit NetworkPolicy rules |
+| [`networkpolicy-attacker-denied.png`](networkpolicy-attacker-denied.png) | Shows denied `attacker → frontend` traffic under the default-deny policy |
 
 ## Notes
 
