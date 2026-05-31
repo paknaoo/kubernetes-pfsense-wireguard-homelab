@@ -11,6 +11,7 @@ The environment is designed to provide a practical platform for cluster deployme
 - [Cluster Topology](#cluster-topology)
 - [Cluster Deployment](#cluster-deployment)
 - [Core Platform Components](#core-platform-components)
+- [Kubernetes Security Controls](#kubernetes-security-controls)
 - [Storage](#storage)
 - [Observability](#observability)
 - [Gateway & Ingress Components](#gateway--ingress-components)
@@ -76,6 +77,16 @@ Several supporting components were installed to provide networking, DNS, metrics
 
 Core platform services are running successfully across the cluster and support networking, observability, and ingress workflows.
 
+## Kubernetes Security Controls
+
+Kubernetes-native security controls were validated using Calico NetworkPolicies and Kubernetes RBAC.
+
+NetworkPolicies enforce least-privilege pod-to-pod communication using a default-deny model, explicit DNS egress, and controlled backend-to-frontend access.
+
+RBAC validates least-privilege Kubernetes API access through read-only, namespace-scoped admin, and custom deployer roles.
+
+More detailed Kubernetes security notes are covered in [Kubernetes Security](kubernetes-security.md).
+
 ## Storage
 
 Persistent storage is provided using `local-path-provisioner`.
@@ -135,6 +146,8 @@ The Kubernetes platform has been validated across deployment, networking, observ
 |------|------|
 | Cluster health | All nodes reporting `Ready` |
 | Pod networking | Calico operational |
+| NetworkPolicies | Default-deny and explicit allow rules validated |
+| RBAC | Least-privilege API access validated with `kubectl auth can-i` |
 | DNS | CoreDNS operational |
 | Metrics | metrics-server collecting node and pod metrics |
 | Storage | PVC-backed workloads validated |
