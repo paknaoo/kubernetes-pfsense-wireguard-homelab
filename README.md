@@ -16,6 +16,7 @@ The project is designed as a practical platform for deploying, validating, and t
 - [Architecture](#architecture)
 - [Network Design](#network-design)
 - [Kubernetes Platform](#kubernetes-platform)
+- [Kubernetes Security Controls](#kubernetes-security-controls)
 - [Secure Remote Administration](#secure-remote-administration)
 - [Validation](#validation)
 - [Key Troubleshooting Outcomes](#key-troubleshooting-outcomes)
@@ -35,6 +36,8 @@ The project is designed as a practical platform for deploying, validating, and t
 - Kubernetes (kubeadm)
 - containerd
 - Calico CNI
+- Kubernetes NetworkPolicies
+- Kubernetes RBAC
 - metrics-server
 - local-path-provisioner
 
@@ -155,6 +158,14 @@ The cluster consists of one control plane node and three worker nodes.
 
 The cluster is fully operational, with all nodes in a `Ready` state and core platform components running successfully.
 
+## Kubernetes Security Controls
+
+Kubernetes-native security controls are implemented using NetworkPolicies and RBAC.
+
+NetworkPolicies enforce least-privilege pod-to-pod communication in a dedicated test namespace, including default-deny behaviour, explicit DNS egress, and controlled backend-to-frontend access.
+
+RBAC is used to validate least-privilege Kubernetes API access through read-only, namespace-scoped admin, and custom deployer roles.
+
 ## Secure Remote Administration
 
 Remote administration is provided through a WireGuard VPN terminated on pfSense.
@@ -250,6 +261,7 @@ Detailed supporting documentation is available in the `docs/` directory:
 | [Access Control](docs/access-control.md) | pfSense firewall model, WireGuard access, and least-privilege controls |
 | [SSH Hardening](docs/ssh-hardening.md) | SSH jump host model, key-based authentication, sshd hardening, and Fail2ban protection |
 | [Kubernetes Platform](docs/kubernetes.md) | Cluster topology, platform components, storage, observability, and ingress |
+| [Kubernetes Security](docs/kubernetes-security.md) | NetworkPolicies, RBAC, least-privilege pod communication, and Kubernetes API access controls |
 | [Troubleshooting & Lessons Learned](docs/troubleshooting.md) | Key issues resolved during deployment and validation |
 | [Screenshots](screenshots/README.md) | Selected validation screenshots for cluster health, metrics, ingress, VPN, and firewall policy |
 
@@ -264,12 +276,14 @@ Detailed supporting documentation is available in the `docs/` directory:
 │   ├── access-control.md
 │   ├── ssh-hardening.md
 │   ├── kubernetes.md
+│   ├── kubernetes-security.md
 │   └── troubleshooting.md
 ├── manifests/
 │   ├── metallb/
 │   ├── envoy-gateway/
 │   ├── metrics-server/
 │   └── storage/
+│   ├── security/
 ├── configs/
 │   ├── wireguard/
 │   ├── pfsense/
