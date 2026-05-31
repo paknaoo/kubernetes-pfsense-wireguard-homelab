@@ -6,6 +6,7 @@
 - [Firewall Policy](#firewall-policy)
 - [WireGuard Least-Privilege Access](#wireguard-least-privilege-access)
 - [SSH Administrative Access](#ssh-administrative-access)
+- [Kubernetes-Native Access Controls](#kubernetes-native-access-controls)
 - [Security Validation](#security-validation)
 
 ## Overview
@@ -23,6 +24,7 @@ The design focuses on:
 - controlled full-tunnel Internet egress
 - SSH jump host administration
 - key-based host access
+- Kubernetes-native NetworkPolicies and RBAC
 - controlled administrative access
 
 ## Security Boundaries
@@ -187,6 +189,16 @@ SSH access is hardened with key-based authentication, disabled root login, disab
 
 More detailed SSH configuration and validation notes are covered in [SSH Hardening](ssh-hardening.md).
 
+## Kubernetes-Native Access Controls
+
+Kubernetes-native access control is implemented using NetworkPolicies and RBAC.
+
+NetworkPolicies restrict pod-to-pod communication using default-deny behaviour and explicit allow rules.
+
+RBAC restricts Kubernetes API permissions through read-only, namespace-scoped admin, and custom least-privilege deployer identities.
+
+More detailed Kubernetes security notes are covered in [Kubernetes Security](kubernetes-security.md).
+
 ## Security Validation
 
 The access-control model has been validated through practical administration, connectivity, and Internet egress testing.
@@ -211,5 +223,8 @@ Verified behaviour:
 | Password-based SSH login | Disabled |
 | Root SSH login | Disabled |
 | Fail2ban SSH protection | Active |
+| NetworkPolicy default deny | Successful |
+| Explicit pod communication allow rules | Successful |
+| RBAC least-privilege validation | Successful |
 
 The validated behaviour confirms that remote administration remains functional, Internet egress is available through pfSense, and internal LAN access remains protected by segmented least-privilege controls.
